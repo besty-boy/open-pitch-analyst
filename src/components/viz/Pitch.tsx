@@ -6,6 +6,9 @@ interface Player {
   x: number; // meters
   y: number; // meters
   color?: string;
+  label?: string;
+  name?: string;
+  opacity?: number;
 }
 
 interface PitchProps {
@@ -146,21 +149,36 @@ export const Pitch: React.FC<PitchProps> = ({
         <path d={`M 0 ${height - s(1)} A ${s(1)} ${s(1)} 0 0 1 ${s(1)} ${height}`} stroke={LINE_COLOR} fill="none" />
 
         {/* Players */}
-        {players.map((p) => (
-          <g key={p.id} transform={`translate(${sx(p.x)}, ${sy(p.y)})`}>
-            <circle r={s(1)} fill={p.color || 'red'} stroke="white" strokeWidth={1} />
-            <text 
-              y={-s(1.5)} 
-              textAnchor="middle" 
-              fill="white" 
-              fontSize={10} 
-              fontWeight="bold"
-              style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}
+        {players.map((p) => {
+          const isBall = p.id.toLowerCase() === 'ball';
+          return (
+            <g 
+              key={p.id} 
+              transform={`translate(${sx(p.x)}, ${sy(p.y)})`}
+              style={{ opacity: p.opacity ?? 1, transition: 'opacity 0.3s ease' }}
             >
-              {p.id}
-            </text>
-          </g>
-        ))}
+              <title>{p.name || p.id}</title>
+              <circle 
+                r={isBall ? s(0.4) : s(1)} 
+                fill={p.color || 'red'} 
+                stroke={isBall ? 'black' : 'white'} 
+                strokeWidth={isBall ? 1 : 1} 
+              />
+              {!isBall && (
+                <text 
+                  y={-s(1.5)} 
+                  textAnchor="middle" 
+                  fill="white" 
+                  fontSize={10} 
+                  fontWeight="bold"
+                  style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}
+                >
+                  {p.label || p.id}
+                </text>
+              )}
+            </g>
+          );
+        })}
 
         {/* Render Children (Players, etc) */}
         {children}

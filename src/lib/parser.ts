@@ -1,7 +1,7 @@
 import Papa from 'papaparse';
 import { TrackPoint } from '../types/data';
 
-const REQUIRED_COLUMNS = ['timestamp', 'player_id', 'x', 'y', 'speed'];
+const REQUIRED_COLUMNS = ['timestamp', 'player_id', 'x', 'y'];
 
 export const parseCSV = (file: File): Promise<TrackPoint[]> => {
   return new Promise((resolve, reject) => {
@@ -13,7 +13,6 @@ export const parseCSV = (file: File): Promise<TrackPoint[]> => {
         const { data, meta, errors } = results;
 
         if (errors.length > 0) {
-          // You might want to handle specific parsing errors here
           console.warn('CSV Parsing warnings/errors:', errors);
         }
 
@@ -51,9 +50,15 @@ export const parseCSV = (file: File): Promise<TrackPoint[]> => {
             return {
               timestamp: parseFloat(row.timestamp),
               player_id: row.player_id,
+              player_name: row.player_name,
+              jersey_number: row.jersey_number ? parseInt(row.jersey_number, 10) : undefined,
+              team_id: row.team_id,
+              half: row.half ? parseInt(row.half, 10) : undefined,
               x: parseFloat(row.x),
               y: parseFloat(row.y),
               speed: parseFloat(row.speed || '0'),
+              heart_rate: row.heart_rate ? parseFloat(row.heart_rate) : undefined,
+              event: row.event,
             };
           })
           .filter((item): item is TrackPoint => item !== null); // Remove nulls

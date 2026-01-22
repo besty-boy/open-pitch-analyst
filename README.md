@@ -1,46 +1,109 @@
-# Getting Started with Create React App
+# OpenPitch Analyst - Cahier des Charges Technique (MVP)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**Version :** 1.0
+**Type :** Web App / PWA (Progressive Web App)
+**Licence :** Open Source (MIT)
+**Priorité :** Football (Extensible à d'autres sports)
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 1. Vision & Objectifs
+L'objectif est de créer une alternative Open Source légère aux logiciels d'analyse sportive coûteux ou complexes (comme R/Python). L'outil permet à un analyste d'importer des données de tracking (GPS/Optique), de visualiser les déplacements sur un terrain vectoriel et de générer des rapports statistiques (Heatmaps, Distances, Vitesses).
 
-### `npm start`
+**Philosophie technique :** "Privacy-First" & "Client-Side Only". Aucune donnée ne transite par un serveur. Tout le traitement se fait dans le navigateur de l'utilisateur via JavaScript/WASM.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+---
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## 2. Stack Technique Imposée
 
-### `npm test`
+Pour garantir la maintenabilité et la performance du projet Open Source :
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+* **Core :** React 18+ (Hooks)
+* **Langage :** TypeScript (Strict mode requis)
+* **Build Tool :** Vite (Pour la rapidité de dev)
+* **Styles :** TailwindCSS (Pour une UI rapide et responsive)
+* **State Management :** Zustand (ou React Context pour le MVP)
+* **Data Processing :**
+    * `papaparse` (Parsing CSV haute performance)
+    * `lodash` (Manipulation de données)
+* **Visualisation :**
+    * `D3.js` ou SVG natif (Rendu du terrain et des trajectoires)
+    * `simpleheat` ou `h337` (Génération des Heatmaps)
+    * `recharts` (Graphiques statistiques)
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 3. Architecture des Données
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 3.1 Format d'Entrée (Input)
+Le MVP doit supporter l'import de fichiers `.csv`.
+Le format standard attendu (Normalisé) pour la V1 est :
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+| Colonne | Type | Description | Unité |
+| :--- | :--- | :--- | :--- |
+| `timestamp` | Float | Temps écoulé depuis le début | Secondes |
+| `player_id` | String | Identifiant unique du joueur | - |
+| `x` | Float | Position longitudinale (0-105) | Mètres |
+| `y` | Float | Position latérale (0-68) | Mètres |
+| `speed` | Float | Vitesse instantanée | km/h |
 
-### `npm run eject`
+### 3.2 Pipeline de Traitement (ETL Client-Side)
+1.  **Ingest :** Upload du fichier via Drag & Drop.
+2.  **Parse :** Lecture du CSV en Web Worker (pour ne pas bloquer l'UI).
+3.  **Normalize :** Conversion des strings en numbers, nettoyage des `null`.
+4.  **Store :** Stockage dans le State global (RAM).
+5.  **Render :** Mise à jour des composants graphiques.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+---
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 4. Feuille de Route (Roadmap) & Sprints
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Le développement est découpé en 5 phases distinctes.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Sprint 1 : Setup & Infrastructure
+* Initialisation du repo avec Vite + React + TS.
+* Configuration de ESLint + Prettier (Standardisation du code).
+* Mise en place de TailwindCSS.
+* Setup CI/CD (Déploiement auto sur Vercel/Netlify/GitHub Pages sur push main).
+* **Livrable :** Un "Hello World" hébergé.
 
-## Learn More
+### Sprint 2 : Le Moteur d'Import (ETL)
+* Création du composant `FileUploader` (Drag & Drop zone).
+* Intégration de `PapaParse`.
+* Implémentation de la validation de schéma (Vérifier que les colonnes `x` et `y` existent).
+* Gestion des erreurs (Feedback utilisateur si le CSV est corrompu).
+* **Livrable :** Une page affichant le CSV brut dans un tableau HTML propre.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Sprint 3 : Visualisation Spatiale (The Pitch)
+* Développement du composant `<Pitch />`.
+    * Rendu SVG d'un terrain de foot (105x68 ratio).
+    * Responsive (doit s'adapter à la taille de l'écran).
+* Développement de la logique de "Scaling" (Linear Scale) :
+    * Fonction `metersToPixels(x, y)`.
+* Affichage de la position du joueur sous forme de point animé (slider temporel basique).
+* **Livrable :** Un terrain avec un point qui bouge selon les données.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Sprint 4 : Advanced Viz (Heatmap)
+* Intégration de la librairie de Heatmap.
+* Logique d'agrégation : Calculer la densité de présence sur une grille virtuelle.
+* Overlay : Superposer la heatmap sur le composant `<Pitch />` avec opacité ajustable.
+* **Livrable :** Le terrain affiche les zones de chaleur du joueur.
+
+### Sprint 5 : Dashboarding & KPI
+* Calcul des métriques globales (côté client) :
+    * `Distance Totale` (Somme des vecteurs).
+    * `Vitesse Max` (Math.max sur la colonne speed).
+* Composants UI "Cards" pour afficher ces chiffres.
+* Graphique linéaire (LineChart) de la vitesse au cours du temps.
+* **Livrable :** Dashboard complet (MVP final).
+
+---
+
+## 5. Guidelines UI/UX
+* **Thème :** Dark Mode par défaut (Standard pour les outils d'analyse pro).
+* **Performance :** Attention aux re-renders inutiles. Les fichiers de tracking peuvent contenir 100k+ lignes. Utiliser `React.memo` et `useMemo` agressivement.
+* **Mobile First :** L'interface doit être consultable sur iPad/Mobile (PWA).
+
+## 6. Structure du Projet (Suggestion)
+
+/src /assets # Images, SVG statiques /components /ui # Boutons, Cards, Inputs (composants génériques) /viz # Pitch, Heatmap, Charts (composants métier) /layout # Header, Sidebar /hooks # Custom hooks (useWindowSize, usePlayerStats) /lib # Logique métier pure (maths, parsing) /store # Global state (Zustand) /types # Définitions TypeScript partagées

@@ -1,0 +1,24 @@
+timestamp,player_id,player_name,jersey_number,team_id,half,x,y,speed,heart_rate,event
+0.0,10,Leo Dev,10,Team_OpenSource,1,52.5,34.0,0.0,110,kickoff
+1.0,10,Leo Dev,10,Team_OpenSource,1,53.0,34.0,2.5,112,
+2.0,10,Leo Dev,10,Team_OpenSource,1,54.0,35.0,4.0,115,
+5.0,10,Leo Dev,10,Team_OpenSource,1,58.0,40.0,12.0,125,jogging
+10.0,10,Leo Dev,10,Team_OpenSource,1,65.0,55.0,15.5,135,
+15.0,10,Leo Dev,10,Team_OpenSource,1,75.0,60.0,22.0,150,acceleration
+16.0,10,Leo Dev,10,Team_OpenSource,1,78.0,62.0,28.0,160,
+17.0,10,Leo Dev,10,Team_OpenSource,1,82.0,63.0,31.5,172,sprint
+18.0,10,Leo Dev,10,Team_OpenSource,1,86.0,63.0,33.2,175,
+19.0,10,Leo Dev,10,Team_OpenSource,1,90.0,60.0,32.0,178,cut_inside
+20.0,10,Leo Dev,10,Team_OpenSource,1,94.0,50.0,29.0,180,
+21.0,10,Leo Dev,10,Team_OpenSource,1,96.0,40.0,25.0,182,
+22.0,10,Leo Dev,10,Team_OpenSource,1,98.0,34.0,18.0,180,shooting_pos
+23.0,10,Leo Dev,10,Team_OpenSource,1,99.0,34.0,5.0,175,shot
+24.0,10,Leo Dev,10,Team_OpenSource,1,102.0,34.0,2.0,170,celebration
+25.0,10,Leo Dev,10,Team_OpenSource,1,106.0,34.0,10.0,175,out_of_bounds_celebration
+30.0,10,Leo Dev,10,Team_OpenSource,1,90.0,30.0,6.0,160,walking_back
+35.0,10,Leo Dev,10,Team_OpenSource,1,80.0,25.0,5.5,150,
+40.0,10,Leo Dev,10,Team_OpenSource,1,70.0,20.0,5.0,140,
+45.0,10,Leo Dev,10,Team_OpenSource,1,60.0,15.0,4.5,135,
+50.0,10,Leo Dev,10,Team_OpenSource,1,55.0,10.0,2.0,130,static
+55.0,10,Leo Dev,10,Team_OpenSource,1,52.5,34.0,0.0,125,back_to_position
+60.0,10,Leo Dev,10,Team_OpenSource,1,52.5,34.0,0.0,120,idle
